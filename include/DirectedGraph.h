@@ -15,25 +15,26 @@ namespace graph{
             int weight_;
         public:
             Edge();
-            ~Edge();
+            ~Edge(){}
     };
 
     class Vertex
     {
     private:
-        int state_id;
+        int vertex_idx_;
         list<Vertex *> edgeList; //Adjacent list of current vertex Before: list<Edge>
         int relative_depth_; //Depth from the root node to the current vertex 
         Vertex *parent_vertex_;
     public:
-        Vertex(cv::Point2f xy, float time, bool leaf_flag=true, bool active_flag=true);
-        ~Vertex();
-
         //data members
         cv::Point2f event_corner_xy_;
-        float timestamp_;
+        double timestamp_;
         bool b_leaf_;
         bool b_active_;
+
+        // Constructor
+        Vertex(cv::Point2f xy, double time, int idx, bool leaf_flag=true, bool active_flag=true);
+        ~Vertex(){}
 
         //methods
         int getStateID();
@@ -41,21 +42,32 @@ namespace graph{
         Vertex* getParentVertex();
         void assignParentVertex(Vertex* parent);
         void deleteEdge(int destinationVertexId);
+
+        // Printing functionalities
+        friend ostream& operator<<(ostream& os, const Vertex& v);
     };
     
 
     class Graph{
         private:
-            vector<Vertex> vertices;
+            
             int graph_id_;
             int max_depth_; //maximum depth of the graph
+            int number_of_vertices_;
         public:
+            vector<Vertex> vertices; // TODO: Put it back to private when you add a function to access it
+            vector<Vertex*> active_vertices_;
+
+            // Constructor
             Graph();
-            ~Graph();
+            ~Graph(){}
             
             //methods
-            void AddVertex(Vertex newVertex); //Note for main: Before, we need to create a new Vertex object and get the event corner info
+            void AddVertex(Vertex newVertex);
             void DeleteVertex(int vertexId); //Before, you need to obtain the vertex id of the node you want to erase
+            int getNumberVertices();
+            int getVertexIndexv1(Vertex* v); // V1
+            int getVertexIndex(Vertex* v);
     };
 
 }

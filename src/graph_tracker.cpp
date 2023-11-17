@@ -1,16 +1,68 @@
 #include <iostream>
-#include "DirectedGraph.h"
+#include "MultiGraph.h"
 
 #include "ros/ros.h"
+#include "rosbag/bag.h"
+#include "rosbag/view.h"
+
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 using namespace std;
 using namespace graph;
+
+class GraphTracker{
+    public:
+        mgraph::MultiGraph graph_of_tracks_; // Contains all the graphs for corresponding tracks
+
+        // Contructor
+        GraphTracker(){
+            graph_of_tracks_ = mgraph::MultiGraph();
+        }
+        ~GraphTracker(){}
+        
+        // methods
+        void cornerCallbackTest(const dvs_msgs::EventArray::ConstPtr& msg){
+            cout << endl;
+            for(int i=0; i < msg->events.size(); i++){
+                cout << "Number of graphs before: " << graph_of_tracks_.size() << endl;
+                mgraph::EventCorner detected_corner(static_cast<int>(msg->events[i].x), static_cast<int>(msg->events[i].y), msg->events[i].ts.toSec());
+                graph_of_tracks_.TrackCorner(detected_corner);
+                cout << "Number of graphs after: " << graph_of_tracks_.size() << endl;
+            }
+            cout << endl;
+        }
+
+};
 
 int main(int argc, char **argv){
     ros::init(argc,argv,"graphTracker");
     ros::NodeHandle nh;
 
-    cout << "HELLO WORLD!" << endl;
+    // Graph object
+    GraphTracker tracks;
+
+    //ros::Subscriber corner_sub = nh.subscribe("/dvs/corners",3,cornercallback);
+    rosbag::Bag bag;
+    bag.open("/home/eduardo/Dataset/EBC/shapes_6dof_5sec_corners.bag",rosbag::bagmode::Read);
+
+    std::vector<std::string> topics;
+    topics.push_back(std::string("/dvs/image_raw"));
+    topics.push_back(std::string("/dvs/corners"));
+
+    rosbag::View view(bag, rosbag::TopicQuery(topics));
+    int c = 0;
+    foreach(rosbag::MessageInstance const m, view){
+        dvs_msgs::EventArray::ConstPtr corner = m.instantiate<dvs_msgs::EventArray>();
+        if (corner != NULL){
+            if(corner->events.size() == 0) continue; // skip if the message has no corner data
+            tracks.cornerCallbackTest(corner);
+            c++;
+        }
+    }
+
+    bag.close();
+    //ros::spin();
 
     return 0;
 }

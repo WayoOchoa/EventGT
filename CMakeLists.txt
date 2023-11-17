@@ -12,7 +12,8 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
-  fa_harris)
+  fa_harris
+  rosbag)
 find_package(Eigen3 REQUIRED)
 
 set(FA_HARRIS_PATH_INCLUDE /home/eduardo/catkin_ws/src/fa_harris/include/fa_harris/include)
@@ -125,10 +126,18 @@ include_directories(
   ${FA_HARRIS_PATH_INCLUDE}
   ${EIGEN3_INCLUDE_DIRS})
 
+SET(GraphTrackerHearders
+  include/DirectedGraph.h
+  include/MultiGraph.h
+)
+
 ## Declare a C++ library
-# add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/event_graph_tracker.cpp
-# )
+add_library(${PROJECT_NAME}
+   src/graph_tracker.cpp
+   src/DirectedGraph.cpp
+   src/MultiGraph.cpp
+   ${GraphTrackerHearders}
+)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -141,7 +150,7 @@ set(LIBS ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(${PROJECT_NAME}_node ${SOURCE_FILES} src/graph_tracker.cpp)
-target_link_libraries(${PROJECT_NAME}_node ${LIBS})
+target_link_libraries(${PROJECT_NAME}_node ${LIBS} ${PROJECT_NAME})
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
