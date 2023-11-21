@@ -1,0 +1,6 @@
+<launch>
+  <!--tracker-->
+  <node name="graph_tracker" pkg="event_graph_tracker" type="event_graph_tracker_node" output="screen" 
+  args="--flagfile=$(find event_graph_tracker)/config/params.conf">
+  </node>
+</launch>

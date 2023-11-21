@@ -13,7 +13,8 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   fa_harris
-  rosbag)
+  rosbag
+  gflags_catkin)
 find_package(Eigen3 REQUIRED)
 
 set(FA_HARRIS_PATH_INCLUDE /home/eduardo/catkin_ws/src/fa_harris/include/fa_harris/include)

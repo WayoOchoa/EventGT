@@ -6,9 +6,10 @@ namespace graph{
     // Edge methods
 
     // Vertex methods
-    Vertex::Vertex(cv::Point2f xy, double time, int idx, bool leaf_flag, bool active_flag)
+    Vertex::Vertex(cv::Point2f xy, double time, int idx, shared_ptr<graph::Graph> parent_graph, bool leaf_flag, bool active_flag)
     : event_corner_xy_(xy), timestamp_(time), vertex_idx_(idx), b_leaf_(leaf_flag), b_active_(active_flag)
     {
+        parent_graph_ = parent_graph;
         parent_vertex_=nullptr;
     }
 
@@ -57,7 +58,7 @@ namespace graph{
     Graph::Graph(): graph_id_(0), max_depth_(0), number_of_vertices_(0){
     }
 
-    void Graph::AddVertex(Vertex newVertex){
+    void Graph::AddVertex(Vertex& newVertex){
         vertices.push_back(newVertex);
         number_of_vertices_++;
     }

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <gflags/gflags.h>
 #include "MultiGraph.h"
 
 #include "ros/ros.h"
@@ -10,6 +11,9 @@
 
 using namespace std;
 using namespace graph;
+
+//DEFINE_int32(pixels_threshold,5,"Window threshold in pixels (x,y) to make associations with old corners");
+//DEFINE_double(time_threshold,0.1,"Temporal threshold for feature associations");
 
 class GraphTracker{
     public:
@@ -25,17 +29,19 @@ class GraphTracker{
         void cornerCallbackTest(const dvs_msgs::EventArray::ConstPtr& msg){
             cout << endl;
             for(int i=0; i < msg->events.size(); i++){
-                cout << "Number of graphs before: " << graph_of_tracks_.size() << endl;
+                //cout << "Number of graphs before: " << graph_of_tracks_.size() << endl;
                 mgraph::EventCorner detected_corner(static_cast<int>(msg->events[i].x), static_cast<int>(msg->events[i].y), msg->events[i].ts.toSec());
-                graph_of_tracks_.TrackCorner(detected_corner);
-                cout << "Number of graphs after: " << graph_of_tracks_.size() << endl;
-            }
+                graph_of_tracks_.ProcessCorner(detected_corner);
+                //cout << "Number of graphs after: " << graph_of_tracks_.size() << endl;
             cout << endl;
+            }
         }
 
 };
 
 int main(int argc, char **argv){
+    google::ParseCommandLineFlags(&argc, &argv, true);
+
     ros::init(argc,argv,"graphTracker");
     ros::NodeHandle nh;
 
