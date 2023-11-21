@@ -23,7 +23,7 @@ namespace mgraph{
         private:
             vector<shared_ptr<graph::Graph>> tracked_corners_;
             int number_of_tracks_;
-            vector<graph::Vertex*> active_vertices_;
+            vector<shared_ptr<graph::Vertex>> active_vertices_;
         public:
             // Data members
 
@@ -36,7 +36,7 @@ namespace mgraph{
             int ProcessCorner(EventCorner& corner);
             void FirstInitialization(EventCorner& corner);
             void TrackCorner(EventCorner& corner);
-            void AddToActiveVertices(graph::Vertex* v_new);
+            void AddToActiveVertices(shared_ptr<graph::Vertex>& v_new);
             void CreateNewTrack(EventCorner& corner);
     };
 }

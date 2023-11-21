@@ -40,17 +40,25 @@ namespace mgraph{
 
         // Add vertex data
         int id = tracked_corners_[0]->getNumberVertices(); // NOTE: CAREFUL THIS DOESNT GIVE THE NUMBER STARTING FROM 0
-        graph::Vertex vertex(corner.xy_coord,corner.timestamp,id,tracked_corners_[0]);
+        shared_ptr<graph::Vertex> vertex(new graph::Vertex(corner.xy_coord,corner.timestamp,id,new_track));
         (tracked_corners_.back())->AddVertex(vertex);
         
         // Add vertex to active vertices list
-        AddToActiveVertices(&((tracked_corners_.back())->vertices.back()));
+        AddToActiveVertices(vertex);
     }
 
     void MultiGraph::TrackCorner(EventCorner& corner){
-        vector<graph::Vertex *> neighbor_vertices;
+        vector<shared_ptr<graph::Vertex>> neighbor_vertices;
         for(const auto& active_v: active_vertices_){
             //Evaluate that the corner is within the pixel and time limits
+            /*cout << "graph v_x:"<< active_v->event_corner_xy_.x << " --- corner x:"<<corner.xy_coord.x<<endl;
+            cout << "Condition 1:" << active_v->event_corner_xy_.x << ">=" << corner.xy_coord.x - pixels_threshold << ":" << (active_v->event_corner_xy_.x >= (corner.xy_coord.x - pixels_threshold)) << endl;
+            cout << "Condition 2:" << active_v->event_corner_xy_.x << "<=" << corner.xy_coord.x + pixels_threshold << ":" << (active_v->event_corner_xy_.x <= (corner.xy_coord.x + pixels_threshold)) << endl;
+            cout << "graph v_y:"<< active_v->event_corner_xy_.y << " --- corner y:"<<corner.xy_coord.y <<endl;
+            cout << "Condition 3:" << active_v->event_corner_xy_.y << ">=" << corner.xy_coord.y - pixels_threshold << ":" << (active_v->event_corner_xy_.y >= (corner.xy_coord.y - pixels_threshold)) << endl;
+            cout << "Condition 4:" << active_v->event_corner_xy_.y << "<=" << corner.xy_coord.y + pixels_threshold << ":" << (active_v->event_corner_xy_.y >= (corner.xy_coord.y + pixels_threshold)) << endl;
+            cout << "graph time:"<< active_v->timestamp_ << " --- corner y:"<<corner.timestamp<<endl;
+            cout << "Condition 5:" << (active_v->timestamp_ > (corner.timestamp - time_threshold))<<endl;*/
             if(active_v->event_corner_xy_.x >= (corner.xy_coord.x - pixels_threshold) && active_v->event_corner_xy_.x <= (corner.xy_coord.x + pixels_threshold)
             && active_v->event_corner_xy_.y >= (corner.xy_coord.y - pixels_threshold) && active_v->event_corner_xy_.y <= (corner.xy_coord.y - pixels_threshold)
             && active_v->timestamp_ > (corner.timestamp - time_threshold)){ // NOTE: CHECK FOR AN OPTIMIZATION FOR THIS COMPARISON
@@ -61,24 +69,9 @@ namespace mgraph{
         // TODO: Check if neighbors are zero
         if(neighbor_vertices.size() == 0){
             CreateNewTrack(corner);
-            // IM CREATING MULTIPLE GRAPHS BUT AS NO NEW VERTEX HAVE BEEN ADDED HTE PREV COMPARISON IS DONE ONLY WITH THE FIRST ONE
-            // CHECK IF THE COMPARISON IS WORKING
+        }else{
+
         }
-
-        /*
-        for(const auto& active_v: active_vertices_){
-            cout << "NODE FOR:"<< active_v->event_corner_xy_ <<endl;
-        }
-        int i = 0;
-        for(const auto& t: tracked_corners_){
-            cout << "i:" << i << endl;
-            for(const auto& v: t->vertices){
-                cout << "V:"<<v.event_corner_xy_<<" v&:"<<&v<<" t&:"<<&t<<endl;
-            }
-            i++;
-        }*/
-
-
 
         //cout << "A\n";
         int x;
@@ -89,13 +82,13 @@ namespace mgraph{
         // Initializing a new graph of tracks with the non-associated corner as root
         shared_ptr<graph::Graph> new_track(new graph::Graph);
         tracked_corners_.push_back(new_track);
-        graph::Vertex v_new(corner.xy_coord,corner.timestamp,0,tracked_corners_.back());
+        shared_ptr<graph::Vertex> v_new(new graph::Vertex(corner.xy_coord,corner.timestamp,0,new_track));
         (tracked_corners_.back())->AddVertex(v_new);
         // Add the new node to the list of active vertices
-        AddToActiveVertices(&((tracked_corners_.back())->vertices.back()));
+        AddToActiveVertices(v_new);
     }
 
-    void MultiGraph::AddToActiveVertices(graph::Vertex* v_new){
+    void MultiGraph::AddToActiveVertices(shared_ptr<graph::Vertex>& v_new){
         active_vertices_.push_back(v_new);
     }
 

@@ -58,7 +58,7 @@ namespace graph{
     Graph::Graph(): graph_id_(0), max_depth_(0), number_of_vertices_(0){
     }
 
-    void Graph::AddVertex(Vertex& newVertex){
+    void Graph::AddVertex(shared_ptr<Vertex>& newVertex){
         vertices.push_back(newVertex);
         number_of_vertices_++;
     }
@@ -67,14 +67,14 @@ namespace graph{
         int vIndex=0;
         for(int i=0; i < vertices.size(); i++){
             // get the index of the current vertex
-            if(vertices.at(i).getStateID() == vertexId){
+            if(vertices.at(i)->getStateID() == vertexId){
                 vIndex = i; //saves the index of the vertex that needs to be erased
             }
         }
 
         // Delete the edges pointing to a certain vertex
-        Vertex* parent_v = vertices.at(vIndex).getParentVertex();
-        parent_v->deleteEdge(vertices.at(vIndex).getStateID());
+        Vertex* parent_v = vertices.at(vIndex)->getParentVertex();
+        parent_v->deleteEdge(vertices.at(vIndex)->getStateID());
 
         // Delete vertex
         vertices.erase(vertices.begin()+vIndex);
@@ -85,13 +85,14 @@ namespace graph{
     }
 
     int Graph::getVertexIndexv1(Vertex* v){
+        /*
         for(auto it = vertices.begin(); it < vertices.end(); it++){
             cout << "A: " <<  &(*it) << " B: "<< v <<endl;
             if(&(*it)==v){
                 auto idx = it - vertices.begin();
                 return idx;
             }
-        }
+        }*/
         
         return -1;
     }

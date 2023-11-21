@@ -57,7 +57,7 @@ namespace graph{
             int graph_id_;
             int max_depth_; //maximum depth of the graph
         public:
-            vector<Vertex> vertices; // TODO: Put it back to private when you add a function to access it
+            vector<shared_ptr<Vertex>> vertices; // TODO: Put it back to private when you add a function to access it
             //vector<Vertex*> active_vertices_;
             int number_of_vertices_;
 
@@ -66,7 +66,7 @@ namespace graph{
             ~Graph(){}
             
             //methods
-            void AddVertex(Vertex& newVertex);
+            void AddVertex(shared_ptr<Vertex>& newVertex);
             void DeleteVertex(int vertexId); //Before, you need to obtain the vertex id of the node you want to erase
             int getNumberVertices();
             int getVertexIndexv1(Vertex* v); // V1

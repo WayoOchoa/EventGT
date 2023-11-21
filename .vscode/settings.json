@@ -85,6 +85,7 @@
         "regex": "cpp",
         "future": "cpp",
         "scoped_allocator": "cpp",
-        "span": "cpp"
+        "span": "cpp",
+        "*.ipp": "cpp"
     }
 }
