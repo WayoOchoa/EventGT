@@ -7,7 +7,7 @@ namespace graph{
 
     // Vertex methods
     Vertex::Vertex(cv::Point2f xy, double time, int idx, shared_ptr<graph::Graph> parent_graph, bool leaf_flag, bool active_flag)
-    : event_corner_xy_(xy), timestamp_(time), vertex_idx_(idx), b_leaf_(leaf_flag), b_active_(active_flag)
+    : event_corner_xy_(xy), timestamp_(time), vertex_idx_(idx), b_leaf_(leaf_flag), b_active_(active_flag), relative_depth_(0)
     {
         parent_graph_ = parent_graph;
         parent_vertex_= nullptr;
@@ -15,6 +15,14 @@ namespace graph{
 
     int Vertex::getStateID(){
         return vertex_idx_;
+    }
+
+    int Vertex::getVertexDepth(){
+        return relative_depth_;
+    }
+
+    void Vertex::assignVertexDepth(int depth){
+        relative_depth_ = depth;
     }
 
     void Vertex::AddEdge(Vertex destinationVertex){

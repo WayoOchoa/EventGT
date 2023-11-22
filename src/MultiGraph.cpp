@@ -69,7 +69,6 @@ namespace mgraph{
         }
         // TODO: Check if neighbors are zero
         if(neighbor_vertices.size() == 0){
-            cout << "A\n";
             CreateNewTrack(corner);
         }else{
             vector<int> leaf_nodes_idx = ObtainLeafNodes(neighbor_vertices); // The data association is primarily done with the leaf nodes of all graphs
@@ -80,16 +79,14 @@ namespace mgraph{
             }else{
                 associated_vertex = CornerAssociation(corner,neighbor_vertices,false,leaf_nodes_idx);
                 if(associated_vertex == nullptr){
-                    cout << "B\n";
                     associated_vertex = CornerAssociation(corner,neighbor_vertices,false,non_leaf_nodes_idx);
                 }
             }
             cout << "as node: " << associated_vertex->event_corner_xy_ << " corner: " << corner.xy_coord << endl;
             AddCornerToTrack(associated_vertex,corner);
         }
-
-        cout << "SIZE ACTIVE:" << active_vertices_.size() << endl;
         
+        /*
         int i = 0;
         for(const auto& t: tracked_corners_){
             cout << "i:"<<i<<" &: "<< t << endl;
@@ -97,7 +94,7 @@ namespace mgraph{
                 cout << "v_id:"<<v->getStateID()<<" (x,y)="<<v->event_corner_xy_<<endl;
             }
             i++;
-        }
+        }*/
 
         int x;
         cin >> x;
@@ -192,6 +189,7 @@ namespace mgraph{
 
         // Assign the parent node to the new added vertex
         v_new->assignParentVertex(parent_node);
+        v_new->assignVertexDepth(parent_node->getVertexDepth()+1); // TODO: CHECK THAT WORKS PROPERLY
         AddToActiveVertices(v_new);
         cout << "graph_parent: "<< parent_node->getParentGraph() << " corner: " << v_new->getParentGraph()<<endl;
 
