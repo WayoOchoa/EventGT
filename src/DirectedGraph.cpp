@@ -10,7 +10,7 @@ namespace graph{
     : event_corner_xy_(xy), timestamp_(time), vertex_idx_(idx), b_leaf_(leaf_flag), b_active_(active_flag)
     {
         parent_graph_ = parent_graph;
-        parent_vertex_=nullptr;
+        parent_vertex_= nullptr;
     }
 
     int Vertex::getStateID(){
@@ -18,8 +18,8 @@ namespace graph{
     }
 
     void Vertex::AddEdge(Vertex destinationVertex){
-        edgeList.push_back(&destinationVertex);
-        destinationVertex.assignParentVertex(this);
+        //edgeList.push_back(&destinationVertex);
+        //destinationVertex.assignParentVertex(this);
     }
 
     void Vertex::deleteEdge(int destinationVertexId){
@@ -30,21 +30,29 @@ namespace graph{
         }
     }
 
-    void Vertex::assignParentVertex(Vertex* parent){
-        /**
-         * Assigns a pointer to the parent
-         * of the current vertex
-        */
+    /** 
+     * Assigns a pointer to the parent
+     *  of the current vertex
+     */
+    void Vertex::assignParentVertex(shared_ptr<Vertex>& parent){
         this->parent_vertex_ = parent;
     }
 
 
-    Vertex* Vertex::getParentVertex(){ 
+    shared_ptr<Vertex> Vertex::getParentVertex(){ 
         /**
          * Returns a Vertex pointer corresponding
          * to the parent of the current vertex
         */
         return parent_vertex_;
+    }
+
+    shared_ptr<Graph> Vertex::getParentGraph(){
+        return parent_graph_;
+    }
+
+    void Vertex::assignParentGraph(shared_ptr<Graph>& g_parent){
+        this->parent_graph_ = g_parent;
     }
 
     ostream& operator<<(ostream& os, const Vertex& v){
@@ -73,7 +81,7 @@ namespace graph{
         }
 
         // Delete the edges pointing to a certain vertex
-        Vertex* parent_v = vertices.at(vIndex)->getParentVertex();
+        shared_ptr<Vertex> parent_v = vertices.at(vIndex)->getParentVertex();
         parent_v->deleteEdge(vertices.at(vIndex)->getStateID());
 
         // Delete vertex

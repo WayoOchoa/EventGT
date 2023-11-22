@@ -33,7 +33,7 @@ class GraphTracker{
                 mgraph::EventCorner detected_corner(static_cast<int>(msg->events[i].x), static_cast<int>(msg->events[i].y), msg->events[i].ts.toSec());
                 graph_of_tracks_.ProcessCorner(detected_corner);
                 //cout << "Number of graphs after: " << graph_of_tracks_.size() << endl;
-            cout << endl;
+            cout << "\n\n";
             }
         }
 

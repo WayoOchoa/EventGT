@@ -24,9 +24,9 @@ namespace graph{
     {
     private:
         int vertex_idx_;
-        list<Vertex *> edgeList; //Adjacent list of current vertex Before: list<Edge>
+        list<shared_ptr<Vertex>> edgeList; //Adjacent list of current vertex Before: list<Edge>
         int relative_depth_; //Depth from the root node to the current vertex 
-        Vertex *parent_vertex_;
+        shared_ptr<Vertex> parent_vertex_;
         shared_ptr<graph::Graph> parent_graph_;
     public:
         //data members
@@ -42,9 +42,10 @@ namespace graph{
         //methods
         int getStateID();
         void AddEdge(Vertex destinationVertex);
-        Vertex* getParentVertex();
-        Graph* getParentGraph();
-        void assignParentVertex(Vertex* parent);
+        shared_ptr<Vertex> getParentVertex();
+        shared_ptr<Graph> getParentGraph();
+        void assignParentGraph(shared_ptr<Graph>& g_parent);
+        void assignParentVertex(shared_ptr<Vertex>& parent);
         void deleteEdge(int destinationVertexId);
 
         // Printing functionalities

@@ -38,5 +38,9 @@ namespace mgraph{
             void TrackCorner(EventCorner& corner);
             void AddToActiveVertices(shared_ptr<graph::Vertex>& v_new);
             void CreateNewTrack(EventCorner& corner);
+            vector<int> ObtainLeafNodes(vector<shared_ptr<graph::Vertex>>& v_neighbors);
+            vector<int> ObtainNonLeafNodes(vector<shared_ptr<graph::Vertex>>& v_neighbors);
+            shared_ptr<graph::Vertex> CornerAssociation(EventCorner& corner, vector<shared_ptr<graph::Vertex>>& v_neighbors,bool check_all=true, vector<int> indexes = vector<int>());
+            void AddCornerToTrack(shared_ptr<graph::Vertex>& parent_node, EventCorner& corner);
     };
 }
