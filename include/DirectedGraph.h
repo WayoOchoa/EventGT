@@ -43,7 +43,7 @@ namespace graph{
         int getStateID();
         int getVertexDepth();
         void assignVertexDepth(int depth=0);
-        void AddEdge(Vertex destinationVertex);
+        void AddEdge(shared_ptr<Vertex>& destinationVertex);
         shared_ptr<Vertex> getParentVertex();
         shared_ptr<Graph> getParentGraph();
         void assignParentGraph(shared_ptr<Graph>& g_parent);
@@ -61,7 +61,6 @@ namespace graph{
             int max_depth_; //maximum depth of the graph
         public:
             vector<shared_ptr<Vertex>> vertices; // TODO: Put it back to private when you add a function to access it
-            //vector<Vertex*> active_vertices_;
             int number_of_vertices_;
 
             // Constructor
@@ -74,5 +73,7 @@ namespace graph{
             int getNumberVertices();
             int getVertexIndexv1(Vertex* v); // V1
             int getVertexIndex(Vertex* v);
+            int getMaxDepth();
+            void UpdateMaxDepth(int new_depth);
     };
 }

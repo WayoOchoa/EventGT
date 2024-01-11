@@ -25,9 +25,8 @@ namespace graph{
         relative_depth_ = depth;
     }
 
-    void Vertex::AddEdge(Vertex destinationVertex){
-        //edgeList.push_back(&destinationVertex);
-        //destinationVertex.assignParentVertex(this);
+    void Vertex::AddEdge(shared_ptr<Vertex>& destinationVertex){
+        this->edgeList.push_back(destinationVertex);
     }
 
     void Vertex::deleteEdge(int destinationVertexId){
@@ -116,6 +115,14 @@ namespace graph{
     int Graph::getVertexIndex(Vertex* v){
         int idx = v->getStateID();
         return idx;
+    }
+
+    int Graph::getMaxDepth(){
+        return max_depth_;
+    }
+
+    void Graph::UpdateMaxDepth(int new_depth){
+        max_depth_ = new_depth;
     }
 
 }

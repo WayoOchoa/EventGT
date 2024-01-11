@@ -1,5 +1,6 @@
 #include <iostream>
 #include <bits/stdc++.h>
+#include <cmath>
 #include <gflags/gflags.h>
 #include "DirectedGraph.h"
 
@@ -42,5 +43,6 @@ namespace mgraph{
             vector<int> ObtainNonLeafNodes(vector<shared_ptr<graph::Vertex>>& v_neighbors);
             shared_ptr<graph::Vertex> CornerAssociation(EventCorner& corner, vector<shared_ptr<graph::Vertex>>& v_neighbors,bool check_all=true, vector<int> indexes = vector<int>());
             void AddCornerToTrack(shared_ptr<graph::Vertex>& parent_node, EventCorner& corner);
+            void UpdateActiveVertices();
     };
 }

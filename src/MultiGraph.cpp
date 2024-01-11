@@ -5,6 +5,7 @@ using namespace std;
 
 #define pixels_threshold 5
 #define time_threshold 0.1
+#define depth_threshold 5
 //DECLARE_int32(pixels_threshold);
 //DECLARE_double(time_threshold);
 
@@ -30,6 +31,10 @@ namespace mgraph{
         }else{
             TrackCorner(corner);
         }
+
+        // Update the list of active vertices to remove the ones above the horizon (Depth_threshold)
+        UpdateActiveVertices(); // TODO: It works, but it can be double checked to make sure
+        
         return 0;
     }
 
@@ -63,11 +68,10 @@ namespace mgraph{
             if(active_v->event_corner_xy_.x >= (corner.xy_coord.x - pixels_threshold) && active_v->event_corner_xy_.x <= (corner.xy_coord.x + pixels_threshold)
             && active_v->event_corner_xy_.y >= (corner.xy_coord.y - pixels_threshold) && active_v->event_corner_xy_.y <= (corner.xy_coord.y + pixels_threshold)
             && active_v->timestamp_ > (corner.timestamp - time_threshold)){ // NOTE: CHECK FOR AN OPTIMIZATION FOR THIS COMPARISON
-                // TODO: COMPARE DISTANCE OR CREATE A SET OF NEIGHBOR NODES
                 neighbor_vertices.push_back(active_v);
             }
         }
-        // TODO: Check if neighbors are zero
+        
         if(neighbor_vertices.size() == 0){
             CreateNewTrack(corner);
         }else{
@@ -82,7 +86,6 @@ namespace mgraph{
                     associated_vertex = CornerAssociation(corner,neighbor_vertices,false,non_leaf_nodes_idx);
                 }
             }
-            cout << "as node: " << associated_vertex->event_corner_xy_ << " corner: " << corner.xy_coord << endl;
             AddCornerToTrack(associated_vertex,corner);
         }
         
@@ -94,12 +97,10 @@ namespace mgraph{
                 cout << "v_id:"<<v->getStateID()<<" (x,y)="<<v->event_corner_xy_<<endl;
             }
             i++;
-        }*/
+        }
 
         int x;
-        cin >> x;
-
-        // TODO: REMOVE NODES THAT ARE NOT CONSIDERED ACTIVE ANYMORE (BASED ON GRAPH DEPTH)
+        cin >> x;*/
     }
 
     void MultiGraph::CreateNewTrack(EventCorner& corner){
@@ -142,7 +143,7 @@ namespace mgraph{
      * @param corner The new detected corner
      * @param v_neighbors A vector of pointers to the active nodes inside the neighborhood of the new detected corner
      * @param check_all Flag that checks if all the active nodes should be checked (Default=true)
-     * @param indexes Indexes to the neighbor nodes that should be checke (Default=empty vector)
+     * @param indexes Indexes to the neighbor nodes that should be checked (Default=empty vector)
      * @return parent_node returns a pointer to the associated vertex
      */
     shared_ptr<graph::Vertex> MultiGraph::CornerAssociation(EventCorner& corner, vector<shared_ptr<graph::Vertex>>& v_neighbors,bool check_all, vector<int> indexes){
@@ -189,14 +190,16 @@ namespace mgraph{
 
         // Assign the parent node to the new added vertex
         v_new->assignParentVertex(parent_node);
-        v_new->assignVertexDepth(parent_node->getVertexDepth()+1); // TODO: CHECK THAT WORKS PROPERLY
+        v_new->assignVertexDepth(parent_node->getVertexDepth()+1);
         AddToActiveVertices(v_new);
-        cout << "graph_parent: "<< parent_node->getParentGraph() << " corner: " << v_new->getParentGraph()<<endl;
 
         // Assign a new edge connecting parent_node ---> v_new
         parent_node->b_leaf_ = false; // set to false as now it has a child node associated
-        //TODO: AddEdge()
-
+        parent_node->AddEdge(v_new);
+        // Update max depth of the graph
+        if(v_new->getVertexDepth() > parent_graph->getMaxDepth()){
+            parent_graph->UpdateMaxDepth(v_new->getVertexDepth());
+        }
     }
 
     void MultiGraph::AddToActiveVertices(shared_ptr<graph::Vertex>& v_new){
@@ -205,5 +208,24 @@ namespace mgraph{
 
     int MultiGraph::size(){
         return tracked_corners_.size();
+    }
+
+    /**
+     * Removes the vertices that go out of scope.
+     * The scope is determine by the relationship between any vertex relative_depth_ and
+     * its parent_graph max_depth_. If this realtionship exceeds the value of a depth_threshold
+     * then the nodes is deactivated.
+    */
+    void MultiGraph::UpdateActiveVertices(){
+        for(auto it = active_vertices_.begin(); it != active_vertices_.end(); ){
+            shared_ptr<graph::Graph> parent_graph = (*it)->getParentGraph();
+            int depth_diff = abs(parent_graph->getMaxDepth()- (*it)->getVertexDepth()); // comparison between max_depth of the graph and the node relative_depth_
+            if(depth_diff > depth_threshold){
+                (*it)->b_active_=false;
+                active_vertices_.erase(it); // Erase the reference to that vertex from the list
+            } else{
+                it++;
+            }
+        }
     }
 }
