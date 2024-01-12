@@ -3,6 +3,7 @@
 #include <cmath>
 #include <gflags/gflags.h>
 #include "DirectedGraph.h"
+#include "Viewer.h"
 
 using namespace std;
 
@@ -25,11 +26,15 @@ namespace mgraph{
             vector<shared_ptr<graph::Graph>> tracked_corners_;
             int number_of_tracks_;
             vector<shared_ptr<graph::Vertex>> active_vertices_;
+
+            // Other threads
+            viewer::Viewer* viewer_ptr_ = NULL;
         public:
             // Data members
 
             // Constructor
             MultiGraph();
+            MultiGraph(viewer::Viewer* viewer);
             ~MultiGraph(){}
 
             // Methods

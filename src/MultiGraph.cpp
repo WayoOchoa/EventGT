@@ -24,6 +24,11 @@ namespace mgraph{
         number_of_tracks_ = 0;
     }
 
+    MultiGraph::MultiGraph(viewer::Viewer* viewer)
+    : viewer_ptr_(viewer){
+        number_of_tracks_ = 0;
+    }
+
     int MultiGraph::ProcessCorner(EventCorner& corner){
         // Check if there are no grpahs to track
         if(tracked_corners_.size()==0){

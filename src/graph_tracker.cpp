@@ -1,5 +1,6 @@
 #include <iostream>
 #include <gflags/gflags.h>
+#include <thread>
 #include "MultiGraph.h"
 
 #include "ros/ros.h"
@@ -22,6 +23,9 @@ class GraphTracker{
         // Contructor
         GraphTracker(){
             graph_of_tracks_ = mgraph::MultiGraph();
+        }
+        GraphTracker(viewer::Viewer* viewer){
+            graph_of_tracks_ = mgraph::MultiGraph(viewer);
         }
         ~GraphTracker(){}
         
@@ -46,7 +50,10 @@ int main(int argc, char **argv){
     ros::NodeHandle nh;
 
     // Graph object
-    GraphTracker tracks;
+    viewer::Viewer* viewer = new viewer::Viewer();
+    std::thread* mptViewer = new thread(&viewer::Viewer::displayTracks,viewer);
+    //mptViewer->detach();
+    GraphTracker tracks(viewer);
 
     //ros::Subscriber corner_sub = nh.subscribe("/dvs/corners",3,cornercallback);
     rosbag::Bag bag;
@@ -57,13 +64,14 @@ int main(int argc, char **argv){
     topics.push_back(std::string("/dvs/corners"));
 
     rosbag::View view(bag, rosbag::TopicQuery(topics));
-    int c = 0;
+
     foreach(rosbag::MessageInstance const m, view){
         dvs_msgs::EventArray::ConstPtr corner = m.instantiate<dvs_msgs::EventArray>();
+        sensor_msgs::Image::ConstPtr image = m.instantiate<sensor_msgs::Image>();
+
         if (corner != NULL){
             if(corner->events.size() == 0) continue; // skip if the message has no corner data
             tracks.cornerCallbackTest(corner);
-            c++;
         }
     }
 

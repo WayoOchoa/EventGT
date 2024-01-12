@@ -130,6 +130,7 @@ include_directories(
 SET(GraphTrackerHearders
   include/DirectedGraph.h
   include/MultiGraph.h
+  include/Viewer.h
 )
 
 ## Declare a C++ library
@@ -137,6 +138,7 @@ add_library(${PROJECT_NAME}
    src/graph_tracker.cpp
    src/DirectedGraph.cpp
    src/MultiGraph.cpp
+   src/Viewer.cpp
    ${GraphTrackerHearders}
 )
 
