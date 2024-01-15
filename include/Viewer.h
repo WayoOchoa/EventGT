@@ -1,7 +1,13 @@
 #include <iostream>
 #include <image_transport/image_transport.h>
-#include <opencv2/core/core.hpp>
 #include <ros/ros.h>
+#include <mutex>
+
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <cv_bridge/cv_bridge.h>
+#include <opencv2/video/tracking.hpp>
 
 namespace viewer{
     /**
@@ -15,6 +21,9 @@ namespace viewer{
         // Publishers and Subscribers
         //image_transport::Publisher tracks_pub_;
         //image_transport::ImageTransport it_;
+
+        // Data members
+        cv_bridge::CvImagePtr img_data_;
     public:
         Viewer();
         ~Viewer(){};
@@ -23,5 +32,6 @@ namespace viewer{
          * @brief main running thread
         */
        void displayTracks();
+       void UpdateImgData(cv_bridge::CvImagePtr new_img); //TODO: Not as reference yet as Im going to test if the copying is well done
    };
 }

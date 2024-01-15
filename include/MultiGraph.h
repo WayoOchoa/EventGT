@@ -1,6 +1,8 @@
 #include <iostream>
 #include <bits/stdc++.h>
 #include <cmath>
+#include <mutex>
+
 #include <gflags/gflags.h>
 #include "DirectedGraph.h"
 #include "Viewer.h"

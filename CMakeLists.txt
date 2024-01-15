@@ -9,6 +9,7 @@ project(event_graph_tracker)
 ## is used, also find other catkin packages
 find_package(OpenCV REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
+  cv_bridge
   roscpp
   rospy
   std_msgs
@@ -111,7 +112,7 @@ set(FA_HARRIS_PATH_INCLUDE /home/eduardo/catkin_ws/src/fa_harris/include/fa_harr
 catkin_package(
 #  INCLUDE_DIRS ${catkin_INCLUDE_DIRS}
 #  LIBRARIES event_graph_tracker
-  CATKIN_DEPENDS roscpp rospy std_msgs fa_harris
+  CATKIN_DEPENDS roscpp rospy std_msgs fa_harris cv_bridge
 #  DEPENDS system_lib
 )
 

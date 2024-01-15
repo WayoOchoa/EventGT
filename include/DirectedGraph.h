@@ -2,6 +2,7 @@
 #include <list>
 #include <vector>
 #include <iterator>
+#include <mutex>
 
 #include <opencv2/opencv.hpp>
 #include "fa_harris_detector.h"
