@@ -83,7 +83,7 @@ int main(int argc, char **argv){
     // Graph object
     viewer::Viewer* viewer = new viewer::Viewer();
     std::thread* mptViewer = new thread(&viewer::Viewer::displayTracks,viewer);
-    mptViewer->detach();
+    //mptViewer->detach();
     GraphTracker tracks(viewer);
 
     //ros::Subscriber corner_sub = nh.subscribe("/dvs/corners",3,cornercallback);
@@ -111,9 +111,7 @@ int main(int argc, char **argv){
     }
 
     bag.close();
-    cout << "AAAA\n";
-    //mptViewer->join();
-    cout << "BBBB\n";
+    viewer->StopRequest();
     //ros::spin();
 
     return 0;

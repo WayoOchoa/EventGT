@@ -22,8 +22,13 @@ namespace viewer{
         //image_transport::Publisher tracks_pub_;
         //image_transport::ImageTransport it_;
 
+        // Methods
+        bool CheckifStop();
+
         // Data members
         cv_bridge::CvImagePtr img_data_;
+
+        bool bFinishRequested;
     public:
         Viewer();
         ~Viewer(){};
@@ -33,5 +38,9 @@ namespace viewer{
         */
        void displayTracks();
        void UpdateImgData(cv_bridge::CvImagePtr new_img); //TODO: Not as reference yet as Im going to test if the copying is well done
+       void StopRequest();
+
+       // Data
+       std::mutex mMutexStop;
    };
 }
