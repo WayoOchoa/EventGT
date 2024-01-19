@@ -12,6 +12,7 @@
 #include <opencv2/video/tracking.hpp>
 
 #include "MultiGraph.h"
+#include "DirectedGraph.h"
 
 namespace viewer{
     /**
@@ -31,7 +32,7 @@ namespace viewer{
 
         // Data members
         cv_bridge::CvImagePtr img_data_;
-        mgraph::EventCorner corner_;
+        vector<shared_ptr<graph::Graph>> tracked_corners_;
 
         bool bFinishRequested;
     public:
@@ -44,11 +45,12 @@ namespace viewer{
        void displayTracks();
        void UpdateImgData(cv_bridge::CvImagePtr new_img); //TODO: Not as reference yet as Im going to test if the copying is well done
        void StopRequest();
-       void setViewData(mgraph::EventCorner &c);
+       void setViewData(vector<shared_ptr<graph::Graph>> &tracked_corners);
        void drawOnImage();
 
        // Data
        std::mutex mMutexStop;
        std::mutex mData;
+       std::mutex mImgData;
    };
 }

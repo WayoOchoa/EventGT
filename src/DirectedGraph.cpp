@@ -21,6 +21,10 @@ namespace graph{
         return relative_depth_;
     }
 
+    int Vertex::getRelDepth(){
+        return relative_depth_;
+    }
+
     void Vertex::assignVertexDepth(int depth){
         relative_depth_ = depth;
     }
@@ -31,7 +35,7 @@ namespace graph{
 
     void Vertex::deleteEdge(int destinationVertexId){
         for(auto it = edgeList.begin(); it != edgeList.end(); it++){
-            if((*it)->getStateID() == destinationVertexId){ // CHECK FOR POSSIBLE REFERENCING ERRORS!!!!
+            if((*it)->getStateID() == destinationVertexId){ // TODO: CHECK FOR POSSIBLE REFERENCING ERRORS!!!!
                 edgeList.erase(it);
             }
         }

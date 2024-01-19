@@ -45,6 +45,7 @@ namespace graph{
         //methods
         int getStateID();
         int getVertexDepth();
+        int getRelDepth();
         void assignVertexDepth(int depth=0);
         void AddEdge(shared_ptr<Vertex>& destinationVertex);
         shared_ptr<Vertex> getParentVertex();

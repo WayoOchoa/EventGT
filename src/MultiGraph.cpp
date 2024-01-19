@@ -38,11 +38,11 @@ namespace mgraph{
             TrackCorner(corner);
         }
 
-        viewer_ptr_->setViewData(corner); // TODO: Pass all graph data and look for the deeper branch. By now an event is passed for testing.
+        viewer_ptr_->setViewData(tracked_corners_); // TODO: Pass all graph data and look for the deeper branch. By now an event is passed for testing.
 
         // Update the list of active vertices to remove the ones above the horizon (Depth_threshold)
-        UpdateActiveVertices(); // TODO: It works, but it can be double checked to make sure
-        
+        UpdateActiveVertices(); // TODO: It works, but it can be double checked to make sure. Is it in the right place to check?
+
         int x;
         cin >> x;
 
@@ -74,11 +74,11 @@ namespace mgraph{
             cout << "graph v_y:"<< active_v->event_corner_xy_.y << " --- corner y:"<<corner.xy_coord.y <<endl;
             cout << "Condition 3:" << active_v->event_corner_xy_.y << ">=" << corner.xy_coord.y - pixels_threshold << ":" << (active_v->event_corner_xy_.y >= (corner.xy_coord.y - pixels_threshold)) << endl;
             cout << "Condition 4:" << active_v->event_corner_xy_.y << "<=" << corner.xy_coord.y + pixels_threshold << ":" << (active_v->event_corner_xy_.y <= (corner.xy_coord.y + pixels_threshold)) << endl;
-            cout << "graph time:"<< active_v->timestamp_ << " --- corner y:"<<corner.timestamp<<endl;
-            cout << "Condition 5:" << (active_v->timestamp_ > (corner.timestamp - time_threshold))<<endl << endl;*/
+            cout << "graph time:"<< active_v->timestamp_ << " --- corner y:"<<corner.timestamp<< " --- diff: "<< (corner.timestamp - active_v->timestamp_) <<endl;
+            cout << "Condition 5:" << ((corner.timestamp - active_v->timestamp_) < time_threshold) <<endl << endl;*/
             if(active_v->event_corner_xy_.x >= (corner.xy_coord.x - pixels_threshold) && active_v->event_corner_xy_.x <= (corner.xy_coord.x + pixels_threshold)
             && active_v->event_corner_xy_.y >= (corner.xy_coord.y - pixels_threshold) && active_v->event_corner_xy_.y <= (corner.xy_coord.y + pixels_threshold)
-            && active_v->timestamp_ > (corner.timestamp - time_threshold)){ // NOTE: CHECK FOR AN OPTIMIZATION FOR THIS COMPARISON
+            && (corner.timestamp - active_v->timestamp_) < time_threshold){ // NOTE: CHECK FOR AN OPTIMIZATION FOR THIS COMPARISON
                 neighbor_vertices.push_back(active_v);
             }
         }
@@ -110,7 +110,7 @@ namespace mgraph{
             i++;
         }
 
-        int x;
+        /*int x;
         cin >> x;*/
     }
 
@@ -211,7 +211,7 @@ namespace mgraph{
         parent_node->b_leaf_ = false; // set to false as now it has a child node associated
         parent_node->AddEdge(v_new);
         // Update max depth of the graph
-        if(v_new->getVertexDepth() > parent_graph->getMaxDepth()){
+        if(v_new->getVertexDepth() > parent_graph->getMaxDepth()){ //TODO: SAVE A REFERENCE OF THE NODE WITH BIGGEST DEPTH
             parent_graph->UpdateMaxDepth(v_new->getVertexDepth());
         }
     }
