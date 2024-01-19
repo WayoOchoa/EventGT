@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <image_transport/image_transport.h>
 #include <ros/ros.h>
@@ -8,6 +10,8 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <cv_bridge/cv_bridge.h>
 #include <opencv2/video/tracking.hpp>
+
+#include "MultiGraph.h"
 
 namespace viewer{
     /**
@@ -27,6 +31,7 @@ namespace viewer{
 
         // Data members
         cv_bridge::CvImagePtr img_data_;
+        mgraph::EventCorner corner_;
 
         bool bFinishRequested;
     public:
@@ -39,8 +44,11 @@ namespace viewer{
        void displayTracks();
        void UpdateImgData(cv_bridge::CvImagePtr new_img); //TODO: Not as reference yet as Im going to test if the copying is well done
        void StopRequest();
+       void setViewData(mgraph::EventCorner &c);
+       void drawOnImage();
 
        // Data
        std::mutex mMutexStop;
+       std::mutex mData;
    };
 }

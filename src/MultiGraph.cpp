@@ -1,11 +1,14 @@
 #include <iostream>
 #include "MultiGraph.h"
+#include "Viewer.h"
+#include "DirectedGraph.h"
 
 using namespace std;
 
 #define pixels_threshold 5
 #define time_threshold 0.1
 #define depth_threshold 5
+#define max_number_of_features 30 // Limits the number of features that are tracked
 //DECLARE_int32(pixels_threshold);
 //DECLARE_double(time_threshold);
 
@@ -21,12 +24,10 @@ namespace mgraph{
 
     // MultiGraph member definition
     MultiGraph::MultiGraph(){
-        number_of_tracks_ = 0;
     }
 
     MultiGraph::MultiGraph(viewer::Viewer* viewer)
     : viewer_ptr_(viewer){
-        number_of_tracks_ = 0;
     }
 
     int MultiGraph::ProcessCorner(EventCorner& corner){
@@ -37,9 +38,14 @@ namespace mgraph{
             TrackCorner(corner);
         }
 
+        viewer_ptr_->setViewData(corner); // TODO: Pass all graph data and look for the deeper branch. By now an event is passed for testing.
+
         // Update the list of active vertices to remove the ones above the horizon (Depth_threshold)
         UpdateActiveVertices(); // TODO: It works, but it can be double checked to make sure
         
+        int x;
+        cin >> x;
+
         return 0;
     }
 
@@ -109,13 +115,16 @@ namespace mgraph{
     }
 
     void MultiGraph::CreateNewTrack(EventCorner& corner){
+
         // Initializing a new graph of tracks with the non-associated corner as root
-        shared_ptr<graph::Graph> new_track(new graph::Graph);
-        tracked_corners_.push_back(new_track);
-        shared_ptr<graph::Vertex> v_new(new graph::Vertex(corner.xy_coord,corner.timestamp,0,new_track));
-        (tracked_corners_.back())->AddVertex(v_new);
-        // Add the new node to the list of active vertices
-        AddToActiveVertices(v_new);
+        if(tracked_corners_.size() < max_number_of_features){
+            shared_ptr<graph::Graph> new_track(new graph::Graph);
+            tracked_corners_.push_back(new_track);
+            shared_ptr<graph::Vertex> v_new(new graph::Vertex(corner.xy_coord,corner.timestamp,0,new_track));
+            (tracked_corners_.back())->AddVertex(v_new);
+            // Add the new node to the list of active vertices
+            AddToActiveVertices(v_new);
+        }
     }
 
     vector<int> MultiGraph::ObtainLeafNodes(vector<shared_ptr<graph::Vertex>>& v_neighbors){
@@ -232,5 +241,33 @@ namespace mgraph{
                 it++;
             }
         }
+    }
+
+    /**
+     * This function checks all the created graph tracks to find those without any more 
+     * active vertices. When one is found the graph (along with all its vertices) is erased.
+    */
+    void MultiGraph::CheckTracks(){
+        for (auto it = tracked_corners_.begin(); it != tracked_corners_.end(); )
+        {
+            bool has_active_nodes = FindActiveNodeInGraph(*it);
+            if(!has_active_nodes){
+                // None active node has been found, so the graph is killed
+                tracked_corners_.erase(it);
+            }else{
+                it++;
+            }
+        }
+        
+    }
+
+    bool MultiGraph::FindActiveNodeInGraph(shared_ptr<graph::Graph> &g){
+        for(const auto& v: g->vertices){
+            if(v->b_active_){
+                return true; // If there is at least one active node then the graph is not killed
+            }
+        }
+        cout << "BBBB\n";
+        return false; //No active nodes found in the graph
     }
 }

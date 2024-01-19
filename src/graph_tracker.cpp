@@ -1,7 +1,8 @@
 #include <iostream>
 #include <gflags/gflags.h>
 #include <thread>
-#include "MultiGraph.h"
+#include "Viewer.h"
+#include "fa_harris_detector.h"
 
 #include "ros/ros.h"
 #include "rosbag/bag.h"
@@ -44,12 +45,12 @@ class GraphTracker{
         void cornerCallbackTest(const dvs_msgs::EventArray::ConstPtr& msg){
             //cout << endl;
             for(int i=0; i < msg->events.size(); i++){
-                //cout << "Number of graphs before: " << graph_of_tracks_.size() << endl;
                 mgraph::EventCorner detected_corner(static_cast<int>(msg->events[i].x), static_cast<int>(msg->events[i].y), msg->events[i].ts.toSec());
                 graph_of_tracks_.ProcessCorner(detected_corner);
-                //cout << "Number of graphs after: " << graph_of_tracks_.size() << endl;
-            //cout << "\n\n";
             }
+
+            // Remove lost features
+            graph_of_tracks_.CheckTracks();
         }
 
         void imageProcessingCallback(const sensor_msgs::Image::ConstPtr &img_msg){
