@@ -129,4 +129,12 @@ namespace graph{
         max_depth_ = new_depth;
     }
 
+    void Graph::UpdateVertexWithMaxDepth(shared_ptr<graph::Vertex> &v){
+        vertex_with_max_depth_ = v;
+    }
+
+    shared_ptr<graph::Vertex>& Graph::GetMaxVertexDepth(){
+        return vertex_with_max_depth_;
+    }
+
 }

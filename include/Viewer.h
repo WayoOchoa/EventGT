@@ -47,6 +47,7 @@ namespace viewer{
        void StopRequest();
        void setViewData(vector<shared_ptr<graph::Graph>> &tracked_corners);
        void drawOnImage();
+       void publishImage(vector<shared_ptr<graph::Vertex>>& corner_locations);
 
        // Data
        std::mutex mMutexStop;

@@ -38,8 +38,6 @@ namespace viewer{
     }
 
     void Viewer::drawOnImage(){
-        cv::namedWindow("Event Graph Tracks", cv::WINDOW_NORMAL);
-        cv::resizeWindow("Event Graph Tracks", 600, 400);
         
         std::lock_guard<std::mutex> lock(mData);
 
@@ -61,21 +59,23 @@ namespace viewer{
             //TODO: tracked N vertices through its parents
         }
 
+        publishImage(corner_locations);
+    }
+
+    void Viewer::publishImage(vector<shared_ptr<graph::Vertex>>& corner_locations){
+        cv::namedWindow("Event Graph Tracks", cv::WINDOW_NORMAL);
+        cv::resizeWindow("Event Graph Tracks", 600, 400);
+
         // Display data
         cv::Mat new_img;
+        //std::lock_guard<std::mutex> lock(mImgData);
         img_data_->image.copyTo(new_img);
         for(const auto& c: corner_locations){
             cv::circle(new_img,c->event_corner_xy_,2,cv::Scalar(0,0,255),cv::FILLED,cv::LINE_8);
         }
 
-        /*
-        cv::Mat new_img;
-        img_data_->image.copyTo(new_img); 
-        cv::circle(new_img,corner_.xy_coord,2,cv::Scalar(0,0,255),cv::FILLED,cv::LINE_8);*/
-
         cv::imshow("Event Graph Tracks",new_img);
         cv::waitKey(1);
-
     }
 
     void Viewer::UpdateImgData(cv_bridge::CvImagePtr new_img){

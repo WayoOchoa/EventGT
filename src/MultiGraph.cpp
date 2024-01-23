@@ -210,9 +210,10 @@ namespace mgraph{
         // Assign a new edge connecting parent_node ---> v_new
         parent_node->b_leaf_ = false; // set to false as now it has a child node associated
         parent_node->AddEdge(v_new);
-        // Update max depth of the graph
+        // Update max depth of the graph and the reference to the biggest depth vertex
         if(v_new->getVertexDepth() > parent_graph->getMaxDepth()){ //TODO: SAVE A REFERENCE OF THE NODE WITH BIGGEST DEPTH
             parent_graph->UpdateMaxDepth(v_new->getVertexDepth());
+            parent_graph->UpdateVertexWithMaxDepth(v_new);
         }
     }
 

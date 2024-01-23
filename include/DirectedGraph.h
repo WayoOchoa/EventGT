@@ -63,6 +63,7 @@ namespace graph{
         private:
             int graph_id_;
             int max_depth_; //maximum depth of the graph
+            shared_ptr<graph::Vertex> vertex_with_max_depth_;
         public:
             vector<shared_ptr<Vertex>> vertices; // TODO: Put it back to private when you add a function to access it
             int number_of_vertices_;
@@ -79,5 +80,7 @@ namespace graph{
             int getVertexIndex(Vertex* v);
             int getMaxDepth();
             void UpdateMaxDepth(int new_depth);
+            void UpdateVertexWithMaxDepth(shared_ptr<graph::Vertex> & v);
+            shared_ptr<graph::Vertex>& GetMaxVertexDepth();
     };
 }
