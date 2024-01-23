@@ -42,21 +42,15 @@ namespace viewer{
         std::lock_guard<std::mutex> lock(mData);
 
         vector<shared_ptr<graph::Vertex>> corner_locations;
-        for(const auto& it: tracked_corners_){
-            //TODO: Find vertices with bigger relative depth
-            for(const auto &it: tracked_corners_){
-                int max_rel_depth = -1; // No corner tracked
-                shared_ptr<graph::Vertex> corner;
-                for(const auto & c: it->vertices){
-                    if(c->getRelDepth() > max_rel_depth){
-                        corner = c;
-                    }
-                }
+        if(tracked_corners_.size() != 0){
+            for(const auto& it: tracked_corners_){
+                shared_ptr<graph::Vertex> corner = it->GetMaxVertexDepth();
+
                 // Save corner for display
                 corner_locations.push_back(corner);
-            }
 
-            //TODO: tracked N vertices through its parents
+                //TODO: tracked N vertices through its parents
+            }
         }
 
         publishImage(corner_locations);
@@ -68,10 +62,10 @@ namespace viewer{
 
         // Display data
         cv::Mat new_img;
-        //std::lock_guard<std::mutex> lock(mImgData);
+        std::lock_guard<std::mutex> lock(mImgData);
         img_data_->image.copyTo(new_img);
         for(const auto& c: corner_locations){
-            cv::circle(new_img,c->event_corner_xy_,2,cv::Scalar(0,0,255),cv::FILLED,cv::LINE_8);
+            cv::circle(new_img,c->event_corner_xy_,2,cv::Scalar(0,0,255),cv::FILLED,cv::LINE_4);
         }
 
         cv::imshow("Event Graph Tracks",new_img);

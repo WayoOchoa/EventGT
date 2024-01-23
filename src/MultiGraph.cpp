@@ -9,6 +9,8 @@ using namespace std;
 #define time_threshold 0.1
 #define depth_threshold 5
 #define max_number_of_features 30 // Limits the number of features that are tracked
+#define feature_lifespan_threshold 0.3 // Amount of time (secs) of a vertex to be kept as active. 
+                                       // After no new addition is done the vertex becomes inactive.
 //DECLARE_int32(pixels_threshold);
 //DECLARE_double(time_threshold);
 
@@ -38,13 +40,10 @@ namespace mgraph{
             TrackCorner(corner);
         }
 
-        viewer_ptr_->setViewData(tracked_corners_); // TODO: Pass all graph data and look for the deeper branch. By now an event is passed for testing.
+        viewer_ptr_->setViewData(tracked_corners_);
 
         // Update the list of active vertices to remove the ones above the horizon (Depth_threshold)
-        UpdateActiveVertices(); // TODO: It works, but it can be double checked to make sure. Is it in the right place to check?
-
-        int x;
-        cin >> x;
+        UpdateActiveVertices(corner.timestamp);
 
         return 0;
     }
@@ -58,6 +57,11 @@ namespace mgraph{
         int id = tracked_corners_[0]->getNumberVertices(); // NOTE: CAREFUL THIS DOESNT GIVE THE NUMBER STARTING FROM 0
         shared_ptr<graph::Vertex> vertex(new graph::Vertex(corner.xy_coord,corner.timestamp,id,new_track));
         (tracked_corners_.back())->AddVertex(vertex);
+        // Update timestamp of the last vertex added to the graph
+        new_track->UpdateLastTimestamp(corner.timestamp);
+
+        // Initialize vertex with max depth
+        new_track->UpdateVertexWithMaxDepth(vertex);
         
         // Add vertex to active vertices list
         AddToActiveVertices(vertex);
@@ -122,6 +126,10 @@ namespace mgraph{
             tracked_corners_.push_back(new_track);
             shared_ptr<graph::Vertex> v_new(new graph::Vertex(corner.xy_coord,corner.timestamp,0,new_track));
             (tracked_corners_.back())->AddVertex(v_new);
+            // Update timestamp of the last vertex added to the graph
+            new_track->UpdateLastTimestamp(corner.timestamp);
+            // Initialize vertex with max depth
+            new_track->UpdateVertexWithMaxDepth(v_new);
             // Add the new node to the list of active vertices
             AddToActiveVertices(v_new);
         }
@@ -201,6 +209,8 @@ namespace mgraph{
         int node_id = parent_graph->getNumberVertices();
         shared_ptr<graph::Vertex> v_new(new graph::Vertex(corner.xy_coord,corner.timestamp,node_id,parent_graph));
         parent_graph->AddVertex(v_new);
+        // Update timestamp of the last vertex added to the graph
+        parent_graph->UpdateLastTimestamp(corner.timestamp);
 
         // Assign the parent node to the new added vertex
         v_new->assignParentVertex(parent_node);
@@ -211,7 +221,7 @@ namespace mgraph{
         parent_node->b_leaf_ = false; // set to false as now it has a child node associated
         parent_node->AddEdge(v_new);
         // Update max depth of the graph and the reference to the biggest depth vertex
-        if(v_new->getVertexDepth() > parent_graph->getMaxDepth()){ //TODO: SAVE A REFERENCE OF THE NODE WITH BIGGEST DEPTH
+        if(v_new->getVertexDepth() > parent_graph->getMaxDepth()){
             parent_graph->UpdateMaxDepth(v_new->getVertexDepth());
             parent_graph->UpdateVertexWithMaxDepth(v_new);
         }
@@ -231,11 +241,14 @@ namespace mgraph{
      * its parent_graph max_depth_. If this realtionship exceeds the value of a depth_threshold
      * then the nodes is deactivated.
     */
-    void MultiGraph::UpdateActiveVertices(){
+    void MultiGraph::UpdateActiveVertices(double& last_corner_t){
         for(auto it = active_vertices_.begin(); it != active_vertices_.end(); ){
             shared_ptr<graph::Graph> parent_graph = (*it)->getParentGraph();
             int depth_diff = abs(parent_graph->getMaxDepth()- (*it)->getVertexDepth()); // comparison between max_depth of the graph and the node relative_depth_
             if(depth_diff > depth_threshold){
+                (*it)->b_active_=false;
+                active_vertices_.erase(it); // Erase the reference to that vertex from the list
+            } else if((last_corner_t-(*it)->timestamp_) > feature_lifespan_threshold){
                 (*it)->b_active_=false;
                 active_vertices_.erase(it); // Erase the reference to that vertex from the list
             } else{
@@ -268,7 +281,6 @@ namespace mgraph{
                 return true; // If there is at least one active node then the graph is not killed
             }
         }
-        cout << "BBBB\n";
         return false; //No active nodes found in the graph
     }
 }

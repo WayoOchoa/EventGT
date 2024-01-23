@@ -14,9 +14,9 @@ using namespace std;
 namespace graph{
     class Graph; // Forward declaration of graph class
 
-    class Edge{
+    class Edge{ // Class not used at the moment
         private:
-            int DestinationVertexID;//TODO: Has to be a pointer
+            int DestinationVertexID;
             int weight_;
         public:
             Edge();
@@ -64,6 +64,7 @@ namespace graph{
             int graph_id_;
             int max_depth_; //maximum depth of the graph
             shared_ptr<graph::Vertex> vertex_with_max_depth_;
+            double last_added_v_timestamp_;
         public:
             vector<shared_ptr<Vertex>> vertices; // TODO: Put it back to private when you add a function to access it
             int number_of_vertices_;
@@ -79,8 +80,10 @@ namespace graph{
             int getVertexIndexv1(Vertex* v); // V1
             int getVertexIndex(Vertex* v);
             int getMaxDepth();
+            double getLastTimestamp();
             void UpdateMaxDepth(int new_depth);
             void UpdateVertexWithMaxDepth(shared_ptr<graph::Vertex> & v);
+            void UpdateLastTimestamp(double &t);
             shared_ptr<graph::Vertex>& GetMaxVertexDepth();
     };
 }

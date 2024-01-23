@@ -44,9 +44,11 @@ class GraphTracker{
         // methods
         void cornerCallbackTest(const dvs_msgs::EventArray::ConstPtr& msg){
             //cout << endl;
+            int last_idx;
             for(int i=0; i < msg->events.size(); i++){
                 mgraph::EventCorner detected_corner(static_cast<int>(msg->events[i].x), static_cast<int>(msg->events[i].y), msg->events[i].ts.toSec());
                 graph_of_tracks_.ProcessCorner(detected_corner);
+                last_idx++;
             }
 
             // Remove lost features
@@ -109,6 +111,9 @@ int main(int argc, char **argv){
             if(corner->events.size() == 0) continue; // skip if the message has no corner data
             tracks.cornerCallbackTest(corner);
         }
+
+        //int x;
+        //cin >> x;
     }
 
     bag.close();

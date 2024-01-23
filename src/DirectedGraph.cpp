@@ -35,7 +35,7 @@ namespace graph{
 
     void Vertex::deleteEdge(int destinationVertexId){
         for(auto it = edgeList.begin(); it != edgeList.end(); it++){
-            if((*it)->getStateID() == destinationVertexId){ // TODO: CHECK FOR POSSIBLE REFERENCING ERRORS!!!!
+            if((*it)->getStateID() == destinationVertexId){
                 edgeList.erase(it);
             }
         }
@@ -75,6 +75,7 @@ namespace graph{
 
     // Graph functions
     Graph::Graph(): graph_id_(0), max_depth_(0), number_of_vertices_(0){
+        vertex_with_max_depth_ = nullptr;
     }
 
     void Graph::AddVertex(shared_ptr<Vertex>& newVertex){
@@ -125,12 +126,20 @@ namespace graph{
         return max_depth_;
     }
 
+    double Graph::getLastTimestamp(){
+        return last_added_v_timestamp_;
+    }
+
     void Graph::UpdateMaxDepth(int new_depth){
         max_depth_ = new_depth;
     }
 
     void Graph::UpdateVertexWithMaxDepth(shared_ptr<graph::Vertex> &v){
         vertex_with_max_depth_ = v;
+    }
+
+    void Graph::UpdateLastTimestamp(double &t){
+        last_added_v_timestamp_ = t;
     }
 
     shared_ptr<graph::Vertex>& Graph::GetMaxVertexDepth(){

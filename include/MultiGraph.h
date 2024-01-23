@@ -61,7 +61,7 @@ namespace mgraph{
             vector<int> ObtainNonLeafNodes(vector<shared_ptr<graph::Vertex>>& v_neighbors);
             shared_ptr<graph::Vertex> CornerAssociation(EventCorner& corner, vector<shared_ptr<graph::Vertex>>& v_neighbors,bool check_all=true, vector<int> indexes = vector<int>());
             void AddCornerToTrack(shared_ptr<graph::Vertex>& parent_node, EventCorner& corner);
-            void UpdateActiveVertices();
+            void UpdateActiveVertices(double& last_corner_t);
             /**
              * @brief Checks all graphs to localize those without active nodes
             */
