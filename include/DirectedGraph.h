@@ -53,6 +53,10 @@ namespace graph{
         void assignParentGraph(shared_ptr<Graph>& g_parent);
         void assignParentVertex(shared_ptr<Vertex>& parent);
         void deleteEdge(int destinationVertexId);
+        /**
+         * @brief Gives a vector list of the previous N vertices of the current vertex
+        */
+        vector<cv::Point> TrackNVertices(int n);
 
         // Printing functionalities
         friend ostream& operator<<(ostream& os, const Vertex& v);

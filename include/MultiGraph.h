@@ -67,5 +67,6 @@ namespace mgraph{
             */
            void CheckTracks();
            bool FindActiveNodeInGraph(shared_ptr<graph::Graph> &g);
+           void setViewerData();
     };
 }

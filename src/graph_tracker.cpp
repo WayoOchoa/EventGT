@@ -1,6 +1,7 @@
 #include <iostream>
 #include <gflags/gflags.h>
 #include <thread>
+#include <chrono>
 #include "Viewer.h"
 #include "fa_harris_detector.h"
 
@@ -53,6 +54,7 @@ class GraphTracker{
 
             // Remove lost features
             graph_of_tracks_.CheckTracks();
+            graph_of_tracks_.setViewerData();
         }
 
         void imageProcessingCallback(const sensor_msgs::Image::ConstPtr &img_msg){
@@ -84,7 +86,7 @@ int main(int argc, char **argv){
     ros::NodeHandle nh;
 
     // Graph object
-    viewer::Viewer* viewer = new viewer::Viewer();
+    viewer::Viewer* viewer = new viewer::Viewer(true);
     std::thread* mptViewer = new thread(&viewer::Viewer::displayTracks,viewer);
     //mptViewer->detach();
     GraphTracker tracks(viewer);
@@ -114,6 +116,7 @@ int main(int argc, char **argv){
 
         //int x;
         //cin >> x;
+        std::this_thread::sleep_for(10ms);
     }
 
     bag.close();

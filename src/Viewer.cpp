@@ -4,10 +4,17 @@
 #include "Viewer.h"
 
 using namespace std;
+using namespace chrono;
+
+/* Performance testing code
+auto start = high_resolution_clock::now();
+auto stop = high_resolution_clock::now();
+auto duration = duration_cast<seconds>(stop-start);
+cout << "DISPLAY TIME: " << duration.count() << endl;*/
 
 namespace viewer{
     // Constructor
-    Viewer::Viewer(): bFinishRequested(false)
+    Viewer::Viewer(bool draw_path_flag): bFinishRequested(false), draw_path(draw_path_flag)
     {
     }
 
@@ -15,16 +22,21 @@ namespace viewer{
      * Main thread responsible of displaying data when received
     */
     void Viewer::displayTracks(){
-    // Setting the viewer parameters
-
+        // Setting the viewer parameters
+        cv::namedWindow("Event Graph Tracks", cv::WINDOW_NORMAL);
+        cv::resizeWindow("Event Graph Tracks", 300, 150);
+    
         while(true){
             if(img_data_ != NULL){
+                //cout <<"A\n";
                 drawOnImage();
             }
 
             if(CheckifStop()){
+                cv::waitKey(100);
                 break;
             }
+            
         }
     }
 
@@ -39,26 +51,24 @@ namespace viewer{
 
     void Viewer::drawOnImage(){
         
-        std::lock_guard<std::mutex> lock(mData);
+        std::unique_lock<std::mutex> lock(mData);
+        vector<shared_ptr<graph::Graph>> corners = tracked_corners_;
+        lock.unlock();
 
         vector<shared_ptr<graph::Vertex>> corner_locations;
-        if(tracked_corners_.size() != 0){
-            for(const auto& it: tracked_corners_){
+        if(corners.size() != 0){
+            for(const auto& it: corners){
                 shared_ptr<graph::Vertex> corner = it->GetMaxVertexDepth();
 
                 // Save corner for display
                 corner_locations.push_back(corner);
-
-                //TODO: tracked N vertices through its parents
             }
-        }
 
-        publishImage(corner_locations);
+            publishImage(corner_locations);
+        }
     }
 
     void Viewer::publishImage(vector<shared_ptr<graph::Vertex>>& corner_locations){
-        cv::namedWindow("Event Graph Tracks", cv::WINDOW_NORMAL);
-        cv::resizeWindow("Event Graph Tracks", 600, 400);
 
         // Display data
         cv::Mat new_img;
@@ -66,6 +76,13 @@ namespace viewer{
         img_data_->image.copyTo(new_img);
         for(const auto& c: corner_locations){
             cv::circle(new_img,c->event_corner_xy_,2,cv::Scalar(0,0,255),cv::FILLED,cv::LINE_4);
+
+            if(draw_path){
+                vector<cv::Point> path = c->TrackNVertices(5);
+                if(path.size() != 0){
+                    cv::polylines(new_img,path,false,cv::Scalar(0,255,0),1,4);
+                }
+            }
         }
 
         cv::imshow("Event Graph Tracks",new_img);

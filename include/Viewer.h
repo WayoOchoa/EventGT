@@ -4,6 +4,7 @@
 #include <image_transport/image_transport.h>
 #include <ros/ros.h>
 #include <mutex>
+#include <chrono>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -33,10 +34,11 @@ namespace viewer{
         // Data members
         cv_bridge::CvImagePtr img_data_;
         vector<shared_ptr<graph::Graph>> tracked_corners_;
+        bool draw_path;
 
         bool bFinishRequested;
     public:
-        Viewer();
+        Viewer(bool draw_path_flag);
         ~Viewer(){};
 
         /**

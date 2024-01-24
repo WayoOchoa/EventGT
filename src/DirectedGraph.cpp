@@ -73,6 +73,21 @@ namespace graph{
         return os;
     }
 
+    vector<cv::Point> Vertex::TrackNVertices(int n){
+        vector<cv::Point> track_path;
+        shared_ptr<Vertex> parent_v = this->getParentVertex();
+        if(parent_v != nullptr && n > 1){
+            track_path = parent_vertex_->TrackNVertices(n-1);
+            cv::Point vertex_xy = this->event_corner_xy_;
+            track_path.push_back(vertex_xy);
+            return track_path;
+        } else{
+            cv::Point vertex_xy = this->event_corner_xy_;
+            track_path.push_back(vertex_xy);
+            return track_path;
+        }
+    }
+
     // Graph functions
     Graph::Graph(): graph_id_(0), max_depth_(0), number_of_vertices_(0){
         vertex_with_max_depth_ = nullptr;

@@ -9,7 +9,7 @@ using namespace std;
 #define time_threshold 0.1
 #define depth_threshold 5
 #define max_number_of_features 30 // Limits the number of features that are tracked
-#define feature_lifespan_threshold 0.3 // Amount of time (secs) of a vertex to be kept as active. 
+#define feature_lifespan_threshold 0.15 // Amount of time (secs) of a vertex to be kept as active. 
                                        // After no new addition is done the vertex becomes inactive.
 //DECLARE_int32(pixels_threshold);
 //DECLARE_double(time_threshold);
@@ -40,7 +40,7 @@ namespace mgraph{
             TrackCorner(corner);
         }
 
-        viewer_ptr_->setViewData(tracked_corners_);
+        //viewer_ptr_->setViewData(tracked_corners_);
 
         // Update the list of active vertices to remove the ones above the horizon (Depth_threshold)
         UpdateActiveVertices(corner.timestamp);
@@ -282,5 +282,9 @@ namespace mgraph{
             }
         }
         return false; //No active nodes found in the graph
+    }
+
+    void MultiGraph::setViewerData(){
+        viewer_ptr_->setViewData(tracked_corners_);
     }
 }
