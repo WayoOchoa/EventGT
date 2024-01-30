@@ -82,6 +82,8 @@ class GraphTracker{
 int main(int argc, char **argv){
     google::ParseCommandLineFlags(&argc, &argv, true);
 
+    bool b_ROS_online = false;
+
     ros::init(argc,argv,"graphTracker");
     ros::NodeHandle nh;
 
@@ -116,7 +118,7 @@ int main(int argc, char **argv){
 
         //int x;
         //cin >> x;
-        std::this_thread::sleep_for(10ms);
+        std::this_thread::sleep_for(50ms);
     }
 
     bag.close();

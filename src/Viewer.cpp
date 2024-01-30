@@ -24,11 +24,11 @@ namespace viewer{
     void Viewer::displayTracks(){
         // Setting the viewer parameters
         cv::namedWindow("Event Graph Tracks", cv::WINDOW_NORMAL);
-        cv::resizeWindow("Event Graph Tracks", 300, 150);
+        cv::resizeWindow("Event Graph Tracks", 600, 400);
     
         while(true){
             if(img_data_ != NULL){
-                //cout <<"A\n";
+                cout <<"A\n";
                 drawOnImage();
             }
 
