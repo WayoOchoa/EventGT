@@ -9,6 +9,10 @@
 
 #include <gflags/gflags.h>
 
+#include "ros/ros.h"
+#include "rosbag/bag.h"
+#include "rosbag/view.h"
+
 using namespace std;
 
 namespace viewer{
@@ -37,8 +41,12 @@ namespace mgraph{
 
     class MultiGraph{
         private:
+            // Members
             vector<shared_ptr<graph::Graph>> tracked_corners_;
             vector<shared_ptr<graph::Vertex>> active_vertices_;
+
+            // ROS variables
+            ros::NodeHandle nh_;
 
             // Other threads
             viewer::Viewer* viewer_ptr_ = NULL;
@@ -48,6 +56,7 @@ namespace mgraph{
             // Constructor
             MultiGraph();
             MultiGraph(viewer::Viewer* viewer);
+            MultiGraph(ros::NodeHandle &nh, viewer::Viewer* viewer);
             ~MultiGraph(){}
 
             // Methods

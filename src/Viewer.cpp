@@ -28,7 +28,7 @@ namespace viewer{
     
         while(true){
             if(img_data_ != NULL){
-                cout <<"A\n";
+                //cout <<"A\n";
                 drawOnImage();
             }
 
@@ -57,6 +57,7 @@ namespace viewer{
 
         vector<shared_ptr<graph::Vertex>> corner_locations;
         if(corners.size() != 0){
+            //cout << "BBBB\n";
             for(const auto& it: corners){
                 shared_ptr<graph::Vertex> corner = it->GetMaxVertexDepth();
 
@@ -85,6 +86,7 @@ namespace viewer{
             }
         }
 
+        //cout << "IIIIII\n";
         cv::imshow("Event Graph Tracks",new_img);
         cv::waitKey(1);
     }

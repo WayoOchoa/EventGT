@@ -32,6 +32,10 @@ namespace mgraph{
     : viewer_ptr_(viewer){
     }
 
+    MultiGraph::MultiGraph(ros::NodeHandle &nh, viewer::Viewer* viewer)
+    : viewer_ptr_(viewer), nh_(nh){
+    }
+
     int MultiGraph::ProcessCorner(EventCorner& corner){
         // Check if there are no grpahs to track
         if(tracked_corners_.size()==0){
